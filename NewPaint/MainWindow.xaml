@@ -1,0 +1,140 @@
+﻿<Fluent:RibbonWindow
+                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:Fluent="urn:fluent-ribbon"
+                     xmlns:controlzex="urn:controlzex" x:Class="NewPaint.MainWindow"
+                     Title="Paint Deluxe" 
+                     Width="800" 
+                     Height="600"
+                     MinWidth="400"
+                     MinHeight="300"
+                     Icon="Icons/starry-night.png">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Fluent:Ribbon Grid.Row="0">
+
+            <!--Backstage-->
+            <Fluent:Ribbon.Menu>
+                <Fluent:Backstage>
+                    <Fluent:BackstageTabControl>
+                        <Fluent:BackstageTabItem Header="New"
+                                                 MouseDown="newFile_MouseDown"/>
+                        <Fluent:BackstageTabItem Header="Open" 
+                                                 MouseDown="LoadCanvas"/>
+                        <Fluent:BackstageTabItem Header="Save"
+                                                 IsEnabled="{Binding ElementName=tabs, Path=Items.Count}"
+                                                 MouseDown="Save"/>
+                        <Fluent:BackstageTabItem Header="Save As" 
+                                                 IsEnabled="{Binding ElementName=tabs, Path=Items.Count}"
+                                                 MouseDown="SaveAsCanvas"/>
+                        <Fluent:BackstageTabItem Header="About" 
+                                                 MouseDown="OpenAbout"/>
+                    </Fluent:BackstageTabControl>
+                </Fluent:Backstage>
+            </Fluent:Ribbon.Menu>
+
+            <!--Tabs-->
+            <Fluent:RibbonTabItem Header="Edit">
+                <Fluent:RibbonGroupBox Header="Tools"
+                                       IsEnabled="{Binding ElementName=tabs, Path=Items.Count}">
+                    <Fluent:Button Header="Pencil" 
+                                   Click="pencilButton_Click"
+                                   Icon="Icons/pencil.png"/>
+                    <Fluent:Button Header="Eraser" 
+                                   Click="eraserButton_Click" 
+                                   Icon="Icons/eraser.png"/>
+                    <Fluent:Button Header="Line Eraser" 
+                                   Click="lineEraserButton_Click"
+                                   Icon="Icons/line_eraser.png" />
+                </Fluent:RibbonGroupBox>
+                <Fluent:RibbonGroupBox IsEnabled="{Binding ElementName=tabs, Path=Items.Count}">
+                    <Fluent:DropDownButton Header="Colors" 
+                                           Icon="Icons/colors-icon.png">
+                        <Fluent:ColorGallery Name="colorGallery" 
+                                             SelectedColorChanged="colorGallery_SelectedColorChanged" 
+                                             IsManipulationEnabled="True"/>
+                    </Fluent:DropDownButton>
+                </Fluent:RibbonGroupBox>
+                <Fluent:RibbonGroupBox IsEnabled="{Binding ElementName=tabs, Path=Items.Count}">
+                    <Fluent:DropDownButton Header="Size" 
+                                           Icon="Icons/line-width.png" >
+                        <Fluent:Button Header="1pt" 
+                                       Icon="Icons/1pt.png" Size="Middle"
+                                       Click="Button_Click1pt"/>
+                        <Fluent:Button Header="3pt" 
+                                       Icon="Icons/3pt.png" Size="Middle"
+                                       Click="Button_Click3pt"/>
+                        <Fluent:Button Header="5pt" 
+                                       Icon="Icons/5pt.png" Size="Middle"
+                                       Click="Button_Click5pt"/>
+                        <Fluent:Button Header="8pt" 
+                                       Icon="Icons/8pt.png" Size="Middle"
+                                       Click="Button_Click8pt"/>
+                    </Fluent:DropDownButton>
+                </Fluent:RibbonGroupBox>
+                <Fluent:RibbonGroupBox IsEnabled="{Binding ElementName=tabs, Path=Items.Count}">
+                    <Fluent:InRibbonGallery Margin="0,3,0,0">
+                        <Fluent:GalleryItem Name="lineItem"
+                                            Width="22" Height="22" PreviewMouseDown="line_MouseDown">
+                            <Fluent:IconPresenter  SmallIcon="Icons/line.png" 
+                                                   SmallSize="20,20" IconSize="Small"/>
+                        </Fluent:GalleryItem>
+                        <Fluent:GalleryItem Name="ellipseItem"
+                                            Width="22" Height="22" PreviewMouseDown="ellipse_PreviewMouseDown">
+                            <Fluent:IconPresenter SmallIcon="Icons/ellipse.png" 
+                                                  SmallSize="20,20" IconSize="Small"/>
+                        </Fluent:GalleryItem>
+                        <Fluent:GalleryItem Name ="starItem"
+                                            Width="22" Height="22" PreviewMouseDown="star_PreviewMouseDown">
+                            <Fluent:IconPresenter SmallIcon="Icons/star.png" 
+                                                  SmallSize="20,20" IconSize="Small"/>
+                        </Fluent:GalleryItem>
+                    </Fluent:InRibbonGallery>
+                </Fluent:RibbonGroupBox>
+                <Fluent:RibbonGroupBox>
+                    <Fluent:Spinner Name="vertexCount"
+                                    Header="Вершины звезды"
+                                    ValueChanged="vertexCount_ValueChanged"
+                                    Minimum="4"
+                                    Maximum="10"
+                                    Increment="1"
+                                    Value="5"
+                                    IsEnabled="{Binding ElementName=starItem, Path=IsSelected}">
+                        
+                    </Fluent:Spinner>
+                </Fluent:RibbonGroupBox>
+            </Fluent:RibbonTabItem>
+            <Fluent:RibbonTabItem Header="View">
+                <Fluent:RibbonGroupBox Header="Tools" IsEnabled="{Binding ElementName=tabs, Path=Items.Count}">
+                    <Fluent:Button Header="ZoomIn" 
+                                   Icon="Icons/zoom-in.png" 
+                                   Click="ZoomInButton_Click"/>
+                    <Fluent:Button Header="ZoomOut" 
+                                   Icon="Icons/zoom-out.png" 
+                                   Click="ZoomOutButton_Click"/>
+                </Fluent:RibbonGroupBox>
+            </Fluent:RibbonTabItem>
+            <Fluent:RibbonTabItem Header="Tabs">
+                <Fluent:RibbonGroupBox Header="Tab Control">
+                    <Fluent:Button Header="NewTab" 
+                                   Icon="Icons/add.png" 
+                                   Click="AddTabButton_Click"/>
+                    <Fluent:Button Header="CloseTab" 
+                                   Icon="Icons/close.png"
+                                   IsEnabled="{Binding ElementName=tabs, Path=Items.Count}"
+                                   Click="CloseTabButton_Click"/>
+                </Fluent:RibbonGroupBox>
+            </Fluent:RibbonTabItem>
+        </Fluent:Ribbon>
+
+        <Grid Grid.Row="1">
+            <TabControl x:Name="tabs" SelectionChanged="tabs_SelectionChanged">
+            </TabControl>
+        </Grid>
+    </Grid>
+</Fluent:RibbonWindow>
