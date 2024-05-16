@@ -1,6 +1,6 @@
 ﻿using Fluent;
 using Microsoft.Win32;
-using NewPaintPlugIn;
+using PluginInterface;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,6 +10,7 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,6 +38,7 @@ namespace NewPaint
         private List<int> filesSavedIdexes = new List<int>();
         private List<string> filesSavedPaths = new List<string>();
         public Dictionary<string, IFilterPlugin> plugins;
+        private const string configFileName = "plugin_config.xml";
 
         private GalleryItem selectedItem { get; set; }
         private string drawingOption = "";
@@ -358,9 +360,11 @@ namespace NewPaint
         private void LoadPlugins()
         {
             string pluginDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
+            string configFile = System.IO.Path.Combine(pluginDirectory, "plugins.config");
 
-            if (Directory.Exists(pluginDirectory))
+            if (!File.Exists(configFile))
             {
+                List<string> pluginNames = new List<string>();
                 foreach (string file in Directory.GetFiles(pluginDirectory, "*.dll"))
                 {
                     try
@@ -370,8 +374,8 @@ namespace NewPaint
                         {
                             if (typeof(IFilterPlugin).IsAssignableFrom(type) && !type.IsInterface)
                             {
-                                FiltersTab.Visibility = Visibility.Visible;
                                 IFilterPlugin plugin = (IFilterPlugin)Activator.CreateInstance(type);
+                                pluginNames.Add(plugin.Name);
                                 plugins.Add(plugin.Name, plugin);
                             }
                         }
@@ -381,10 +385,49 @@ namespace NewPaint
                         MessageBox.Show($"Error loading plugin from {file}: {ex.Message}");
                     }
                 }
+
+                using (StreamWriter sw = File.CreateText(configFile))
+                {
+                    foreach (string pluginName in pluginNames)
+                    {
+                        sw.WriteLine(pluginName);
+                    }
+                }
             }
             else
             {
-                MessageBox.Show("Plugin directory does not exist.");
+                List<string> pluginNames = new List<string>();
+                using (StreamReader sr = File.OpenText(configFile))
+                {
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        pluginNames.Add(line.Trim());
+                    }
+                }
+                foreach (string file in Directory.GetFiles(pluginDirectory, "*.dll"))
+                {
+                    try
+                    {
+                        Assembly assembly = Assembly.LoadFrom(file);
+                        foreach (Type type in assembly.GetTypes())
+                        {
+                            if (typeof(IFilterPlugin).IsAssignableFrom(type) && !type.IsInterface)
+                            {
+                                IFilterPlugin plugin = (IFilterPlugin)Activator.CreateInstance(type);
+                                if (pluginNames.Contains(plugin.Name))
+                                {
+                                    FiltersTab.Visibility = Visibility.Visible;
+                                    plugins.Add(plugin.Name, plugin);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error loading plugin from {file}: {ex.Message}");
+                    }
+                }
             }
         }
 
@@ -410,6 +453,16 @@ namespace NewPaint
             ((InkCanvas)tabs.SelectedContent).MouseLeftButtonDown += InkCanvas_PreviewMouseLeftButtonDown;
             ((InkCanvas)tabs.SelectedContent).MouseLeftButtonUp += InkCanvas_PreviewMouseLeftButtonUp;
             ((InkCanvas)tabs.SelectedContent).MouseMove += InkCanvas_PreviewMouseMove;
+        }
+
+        private void OpenPlugins(object sender, MouseButtonEventArgs e)
+        {
+            PluginsWindow pluginsWindow = new PluginsWindow(plugins);
+
+            pluginsWindow.plugins = plugins;
+            pluginsWindow.ConfigFilePath = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "plugins.config");
+
+            pluginsWindow.ShowDialog();
         }
 
         #endregion
@@ -698,6 +751,5 @@ namespace NewPaint
         }
 
         #endregion
-
     }
 }

@@ -1,0 +1,26 @@
+﻿<Window x:Class="NewPaint.PluginsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Plugins" Height="310" Width="463" ResizeMode="NoResize" Icon="Icons/starry-night.png">
+    <Grid>
+        <TextBlock Text="Loaded Plugins" FontSize="16" FontWeight="Bold" Margin="10"/>
+
+        <Grid Margin="10">
+            <ListBox Name="pluginsListBox" Grid.Column="0" Margin="0,0,105,0" SelectionMode="Extended">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Name}" Margin="0,0,10,0"/>
+                            <TextBlock Text="{Binding Version}" FontStyle="Italic" Foreground="Gray"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <StackPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <Button Content="Edit Configuration" Click="EditConfiguration_Click" Margin="0,0,0,5"/>
+                <Button Content="Close" Click="Close_Click"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

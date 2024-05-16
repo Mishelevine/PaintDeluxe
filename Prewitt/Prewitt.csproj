@@ -31,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NewPaintPlugIn">
-      <HintPath>..\..\NewPaintPlugIn\NewPaintPlugIn\bin\Debug\NewPaintPlugIn.dll</HintPath>
+    <Reference Include="PluginInterface">
+      <HintPath>..\PluginInterface\bin\Debug\PluginInterface.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using NewPaintPlugIn;
+using PluginInterface;
 
 namespace Prewitt
 {
@@ -19,15 +19,13 @@ namespace Prewitt
 
         public void Transform(ref InkCanvas inkCanvas)
         {
-            // Преобразование InkCanvas в Bitmap
             Bitmap bitmap = InkCanvasToBitmap(inkCanvas);
 
-            // Применение фильтра Prewitt к изображению
             Bitmap filteredBitmap = ApplyPrewittFilter(bitmap);
 
-            // Создание нового InkCanvas с примененным фильтром
             inkCanvas = BitmapToInkCanvas(filteredBitmap, inkCanvas.ActualWidth, inkCanvas.ActualHeight);
         }
+
 
         private Bitmap InkCanvasToBitmap(InkCanvas inkCanvas)
         {
@@ -66,10 +64,8 @@ namespace Prewitt
         {
             Bitmap result = new Bitmap(image.Width, image.Height);
 
-            // Горизонтальный Prewitt фильтр
             int[,] horizontalFilter = { { -1, 0, 1 }, { -1, 0, 1 }, { -1, 0, 1 } };
 
-            // Вертикальный Prewitt фильтр
             int[,] verticalFilter = { { -1, -1, -1 }, { 0, 0, 0 }, { 1, 1, 1 } };
 
             for (int y = 1; y < image.Height - 1; y++)
@@ -84,14 +80,14 @@ namespace Prewitt
                         for (int i = -1; i <= 1; i++)
                         {
                             System.Drawing.Color pixel = image.GetPixel(x + i, y + j);
-                            int gray = (pixel.R + pixel.G + pixel.B) / 3; // Преобразование в оттенки серого
+                            int gray = (pixel.R + pixel.G + pixel.B) / 3;
                             horizontalGradient += gray * horizontalFilter[j + 1, i + 1];
                             verticalGradient += gray * verticalFilter[j + 1, i + 1];
                         }
                     }
 
                     int totalGradient = (int)Math.Sqrt(Math.Pow(horizontalGradient, 2) + Math.Pow(verticalGradient, 2));
-                    totalGradient = Math.Min(255, Math.Max(0, totalGradient)); // Гарантирование, что значение находится в диапазоне [0, 255]
+                    totalGradient = Math.Min(255, Math.Max(0, totalGradient));
                     result.SetPixel(x, y, System.Drawing.Color.FromArgb(totalGradient, totalGradient, totalGradient));
                 }
             }

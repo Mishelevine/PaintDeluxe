@@ -34,6 +34,8 @@
                                                  MouseDown="SaveAsCanvas"/>
                         <Fluent:BackstageTabItem Header="About" 
                                                  MouseDown="OpenAbout"/>
+                        <Fluent:BackstageTabItem Header="Plugins"
+                                                 MouseDown="OpenPlugins"/>
                     </Fluent:BackstageTabControl>
                 </Fluent:Backstage>
             </Fluent:Ribbon.Menu>

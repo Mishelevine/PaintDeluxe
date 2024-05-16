@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using NewPaintPlugIn;
+using PluginInterface;
 
 namespace MedianFilter
 {
@@ -16,13 +16,10 @@ namespace MedianFilter
 
         public void Transform(ref InkCanvas inkCanvas)
         {
-            // Преобразование InkCanvas в Bitmap
             Bitmap bitmap = InkCanvasToBitmap(inkCanvas);
 
-            // Применение матричного медианного фильтра к изображению
             Bitmap filteredBitmap = ApplyMedianFilter(bitmap);
 
-            // Создание нового InkCanvas с примененным фильтром
             inkCanvas = BitmapToInkCanvas(filteredBitmap, inkCanvas.ActualWidth, inkCanvas.ActualHeight);
         }
 

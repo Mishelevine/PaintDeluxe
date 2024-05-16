@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using NewPaintPlugIn;
+using PluginInterface;
 
 namespace Shuffle
 {
@@ -16,49 +16,36 @@ namespace Shuffle
 
         public void Transform(ref InkCanvas inkCanvas)
         {
-            // Преобразование InkCanvas в Bitmap
             Bitmap bitmap = InkCanvasToBitmap(inkCanvas);
 
-            // Разбиение изображения на 3x3 части
             List<Bitmap> imageParts = SplitImage(bitmap, 3, 3);
 
-            // Перемешивание частей изображения
             imageParts = ShuffleImageParts(imageParts);
 
-            // Создание нового Bitmap с перемешанными частями изображения
             Bitmap shuffledBitmap = CombineImageParts(imageParts, bitmap.Width, bitmap.Height);
 
-            // Создание нового InkCanvas с перемешанными изображениями
             inkCanvas = BitmapToInkCanvas(shuffledBitmap, inkCanvas.ActualWidth, inkCanvas.ActualHeight);
         }
         private Bitmap InkCanvasToBitmap(InkCanvas inkCanvas)
         {
-            // Определение размеров InkCanvas
             int width = (int)inkCanvas.ActualWidth;
             int height = (int)inkCanvas.ActualHeight;
 
-            // Создание нового Bitmap с заданными размерами
             Bitmap bitmap = new Bitmap(width, height);
 
-            // Создание Graphics для рисования на Bitmap
             using (Graphics graphics = Graphics.FromImage(bitmap))
             {
-                // Создание прозрачного фона
                 graphics.Clear(System.Drawing.Color.Transparent);
 
-                // Создание нового Visual для отрисовки InkCanvas
                 var visual = new DrawingVisual();
 
-                // Рендеринг InkCanvas на Visual
                 var drawingContext = visual.RenderOpen();
                 drawingContext.DrawRectangle(new System.Windows.Media.VisualBrush(inkCanvas), null, new System.Windows.Rect(0, 0, width, height));
                 drawingContext.Close();
 
-                // Рендеринг Visual на Graphics
                 RenderTargetBitmap rtb = new RenderTargetBitmap(width, height, 96, 96, System.Windows.Media.PixelFormats.Pbgra32);
                 rtb.Render(visual);
 
-                // Конвертация RenderTargetBitmap в Bitmap
                 var encoder = new System.Windows.Media.Imaging.PngBitmapEncoder();
                 encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(rtb));
 
