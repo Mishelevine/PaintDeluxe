@@ -1,11 +1,13 @@
 ﻿using Fluent;
 using Microsoft.Win32;
+using NewPaintPlugIn;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,6 +36,7 @@ namespace NewPaint
         private int filesCreated = 0;
         private List<int> filesSavedIdexes = new List<int>();
         private List<string> filesSavedPaths = new List<string>();
+        public Dictionary<string, IFilterPlugin> plugins;
 
         private GalleryItem selectedItem { get; set; }
         private string drawingOption = "";
@@ -48,6 +51,9 @@ namespace NewPaint
         public MainWindow()
         {
             this.InitializeComponent();
+            plugins = new Dictionary<string, IFilterPlugin>();
+            LoadPlugins();
+            CreatePluginsMenu();
         }
 
         #region Добавление и закрытие окон
@@ -343,6 +349,67 @@ namespace NewPaint
         {
             var About = new About();
             About.Show();
+        }
+
+        #endregion
+
+        #region Работа с плагинами
+
+        private void LoadPlugins()
+        {
+            string pluginDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
+
+            if (Directory.Exists(pluginDirectory))
+            {
+                foreach (string file in Directory.GetFiles(pluginDirectory, "*.dll"))
+                {
+                    try
+                    {
+                        Assembly assembly = Assembly.LoadFrom(file);
+                        foreach (Type type in assembly.GetTypes())
+                        {
+                            if (typeof(IFilterPlugin).IsAssignableFrom(type) && !type.IsInterface)
+                            {
+                                FiltersTab.Visibility = Visibility.Visible;
+                                IFilterPlugin plugin = (IFilterPlugin)Activator.CreateInstance(type);
+                                plugins.Add(plugin.Name, plugin);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error loading plugin from {file}: {ex.Message}");
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Plugin directory does not exist.");
+            }
+        }
+
+        public void CreatePluginsMenu()
+        {
+            foreach (var p in plugins)
+            {
+                var item = new Fluent.Button();
+                item.Header = p.Value.Name;
+                item.Size = RibbonControlSize.Middle;
+                ((Fluent.Button)item).Name = p.Value.Name;
+                FiltersMenu.Items.Add(item);
+                item.Click += OnPluginClick;
+            }
+        }
+
+        public void OnPluginClick(object sender, RoutedEventArgs args)
+        {
+            IFilterPlugin plugin = plugins[((Fluent.Button)sender).Name];
+            var t = (InkCanvas)tabs.SelectedContent;
+            plugin.Transform(ref t);
+            ((TabItem)tabs.SelectedValue).Content = t;
+            ((InkCanvas)tabs.SelectedContent).MouseLeftButtonDown += InkCanvas_PreviewMouseLeftButtonDown;
+            ((InkCanvas)tabs.SelectedContent).MouseLeftButtonUp += InkCanvas_PreviewMouseLeftButtonUp;
+            ((InkCanvas)tabs.SelectedContent).MouseMove += InkCanvas_PreviewMouseMove;
         }
 
         #endregion

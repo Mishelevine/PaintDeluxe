@@ -130,6 +130,14 @@
                                    Click="CloseTabButton_Click"/>
                 </Fluent:RibbonGroupBox>
             </Fluent:RibbonTabItem>
+            <Fluent:RibbonTabItem Header="Filters" Visibility="Hidden" Name="FiltersTab">
+                <Fluent:RibbonGroupBox IsEnabled="{Binding ElementName=tabs, Path=Items.Count}">
+                    <Fluent:DropDownButton Header="Filters" 
+                                           Icon="Icons/line-width.png"
+                                           Name="FiltersMenu">
+                    </Fluent:DropDownButton>
+                </Fluent:RibbonGroupBox>
+            </Fluent:RibbonTabItem>
         </Fluent:Ribbon>
 
         <Grid Grid.Row="1">

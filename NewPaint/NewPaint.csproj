@@ -41,8 +41,20 @@
     <Reference Include="Fluent, Version=10.0.0.0, Culture=neutral, PublicKeyToken=3e436e32a8c5546f, processorArchitecture=MSIL">
       <HintPath>..\packages\Fluent.Ribbon.10.0.4\lib\net462\Fluent.dll</HintPath>
     </Reference>
+    <Reference Include="Median">
+      <HintPath>..\Median\bin\Debug\Median.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.39\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
+    </Reference>
+    <Reference Include="NewPaintPlugIn">
+      <HintPath>..\..\NewPaintPlugIn\NewPaintPlugIn\bin\Debug\NewPaintPlugIn.dll</HintPath>
+    </Reference>
+    <Reference Include="Prewitt">
+      <HintPath>..\Prewitt\bin\Debug\Prewitt.dll</HintPath>
+    </Reference>
+    <Reference Include="Shuffle">
+      <HintPath>..\Shuffle\bin\Debug\Shuffle.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
